@@ -1,0 +1,67 @@
+.ui_button {
+    display: inline-block;
+    background: #D0EEFF;
+    border: 1px solid #99D3F5;
+    border-radius: 4px;
+    padding: 4px 12px;
+    /*overflow: hidden;*/
+    color: #1E88C7;
+    text-decoration: none;
+    text-indent: 0;
+}
+
+.ui_button:hover {
+    background: #AADFFD;
+    border-color: #78C3F3;
+    color: #004974;
+    text-decoration: none;
+}
+.admin-img-manager{
+}
+.admin-manage-img{
+    display: inline-block;
+}
+.admin-upload-img{
+    display: inline-block;
+    margin-left: 15px;
+}
+#admin-img-file{
+    position:absolute;
+    clip:rect(0 0 0 0);
+    opacity: 0;
+}
+.ui_button{
+    padding: 10px 15px;
+}
+.background {
+    display: block;
+    width: 100%;
+    height: 100%;
+    opacity: 0.4;
+    filter: alpha(opacity=40);
+    background:white;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 2000;
+}
+.progressBar {
+    border: solid 2px #86A5AD;
+    background: white url(../imgs/loading.gif) no-repeat 10px 10px;
+}
+.progressBar {
+    display: block;
+    width: 160px;
+    height: 28px;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    margin-left: -74px;
+    margin-top: -14px;
+    padding: 10px 10px 10px 50px;
+    text-align: left;
+    line-height: 27px;
+    font-weight: bold;
+    position: absolute;
+    z-index: 2001;
+}
