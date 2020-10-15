@@ -152,6 +152,10 @@ class SmmsForTypecho_Plugin implements Typecho_Plugin_Interface
     public static function Widget_Archive_beforeRender($archive)
     {
         $option = Helper::options()->plugin('SmmsForTypecho');
+        if(Helper::options()->theme == 'onecircle'){ // this only for onecircle theme, to display in all pages
+            echo '<link rel="stylesheet" href="'.SMMS_URL . 'css/smms.diy.min.css'.'" type="text/css"/>';
+            return;
+        }
         if (!$option->Comment_){
             return;
         }
@@ -168,6 +172,11 @@ class SmmsForTypecho_Plugin implements Typecho_Plugin_Interface
     public static function Widget_Archive_afterRender($archive)
     {
         $option = Helper::options()->plugin('SmmsForTypecho');
+        if(Helper::options()->theme == 'onecircle'){ // this only for onecircle theme, to display in all pages
+            echo '<script src="'. SMMS_URL . 'js/comment.min.js'. '"></script>';
+
+            return;
+        }
         if (!$option->Comment_){
             return;
         }

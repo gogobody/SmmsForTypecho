@@ -30,6 +30,7 @@ input#zz-img-file {
     width: 60px;
     height: 60px;
     display: flex;
+    border-radius: 5px;
 }
 
 .chevereto-pup-button-icon svg {

@@ -50,7 +50,9 @@ smms = {
                         $("#zz-img-add").text('上传图片');
                         $('#zz-img-show').append('<img src="' + res.data.url + '" />');
                         //$('textarea[name="comment"]').val($('textarea[name="comment"]').val() + '<img src="' + res.data.url + '" />').focus();
-                        $(comment_selector_).insertAtCaret('<img src="' + res.data.url + '" />');
+                        if (typeof comment_selector_!="undefined" ){
+                            $(comment_selector_).insertAtCaret('<img src="' + res.data.url + '" />');
+                        }
                     }
                 })
             }
