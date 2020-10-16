@@ -2,8 +2,8 @@
 
 .zz-add-img {
     display: inline-block;
-    margin-top: 5px;
-    margin-bottom: 5px;
+    width: 66px;
+    height: 24px;
 }
 
 input#zz-img-file {
@@ -45,6 +45,7 @@ input#zz-img-file {
 }
 .chevereto-pup-button-text {
     margin-left: .25em;
+    font-size: 12px;
 }
 #zz-img-add {
     line-height: normal;
@@ -52,16 +53,16 @@ input#zz-img-file {
     -o-transition: all .2s;
     transition: all .2s;
     outline: 0;
-    color: #333;
+    color: #99a2aa;
     border: none;
     cursor: pointer;
     border: 1px solid rgba(0,0,0,.15);
-    background: #ececec;
+    background: white;
     border-radius: .2em;
-    padding: .5em 1em;
-    font-size: 12px;
     font-weight: 700;
     text-shadow: none;
+    height: 100%;
+    width: 100%;
 }
 .comment_text img {
     display: block;

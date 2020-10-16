@@ -128,9 +128,9 @@ class SmmsForTypecho_Plugin implements Typecho_Plugin_Interface
 
         echo '<link rel="stylesheet" href="'. SMMS_URL . 'css/input.min.css'.'" type="text/css"/>';
         echo '<link rel="stylesheet" href="'. SMMS_URL . 'css/modal.css'.'" type="text/css"/>';
-
-
+        return $header;
     }
+
     public static function admin_writepost_scripts($post){
         $option = Helper::options()->plugin('SmmsForTypecho');
         if (!$option->Content_){
@@ -152,19 +152,18 @@ class SmmsForTypecho_Plugin implements Typecho_Plugin_Interface
     public static function Widget_Archive_beforeRender($archive)
     {
         $option = Helper::options()->plugin('SmmsForTypecho');
-        if(Helper::options()->theme == 'onecircle'){ // this only for onecircle theme, to display in all pages
-            echo '<link rel="stylesheet" href="'.SMMS_URL . 'css/smms.diy.min.css'.'" type="text/css"/>';
-            return;
+        if(Helper::options()->theme != 'onecircle'){ // this only for onecircle theme, to display in all pages
+            if (!$option->Comment_){
+                return;
+            }
+            if (!$archive->is('single')) {
+                return;
+            }
+            if (!$archive->allow('comment')) {
+                return;
+            }
         }
-        if (!$option->Comment_){
-            return;
-        }
-        if (!$archive->is('single')) {
-            return;
-        }
-        if (!$archive->allow('comment')) {
-            return;
-        }
+
         echo '<link rel="stylesheet" href="'.SMMS_URL . 'css/smms.diy.min.css'.'" type="text/css"/>';
 
     }
@@ -172,28 +171,28 @@ class SmmsForTypecho_Plugin implements Typecho_Plugin_Interface
     public static function Widget_Archive_afterRender($archive)
     {
         $option = Helper::options()->plugin('SmmsForTypecho');
-        if(Helper::options()->theme == 'onecircle'){ // this only for onecircle theme, to display in all pages
-            echo '<script src="'. SMMS_URL . 'js/comment.min.js'. '"></script>';
+        if(Helper::options()->theme != 'onecircle'){ // this only for onecircle theme, to display in all pages
+            if (!$option->Comment_){
+                return;
+            }
+            if (!$archive->is('single')) {
+                return;
+            }
+            if (!$archive->allow('comment')) {
+                return;
+            }
+        }
 
-            return;
-        }
-        if (!$option->Comment_){
-            return;
-        }
-        if (!$archive->is('single')) {
-            return;
-        }
-        if (!$archive->allow('comment')) {
-            return;
-        }
 
         echo '<script>comment_selector_="'.$option->Comment_Selector.'";</script>';
         ?>
         <script>
             smms_node = {
                 init:function () {
-                    let insertHtml = '<div id="zz-img-show"></div><div class="zz-add-img "><input id="zz-img-file" type="file" accept="image/*" multiple="multiple"><button id="zz-img-add" type="button"><span class="chevereto-pup-button-icon"><svg class="chevereto-pup-button-icon" xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><path d="M76.7 87.5c12.8 0 23.3-13.3 23.3-29.4 0-13.6-5.2-25.7-15.4-27.5 0 0-3.5-0.7-5.6 1.7 0 0 0.6 9.4-2.9 12.6 0 0 8.7-32.4-23.7-32.4 -29.3 0-22.5 34.5-22.5 34.5 -5-6.4-0.6-19.6-0.6-19.6 -2.5-2.6-6.1-2.5-6.1-2.5C10.9 25 0 39.1 0 54.6c0 15.5 9.3 32.7 29.3 32.7 2 0 6.4 0 11.7 0V68.5h-13l22-22 22 22H59v18.8C68.6 87.4 76.7 87.5 76.7 87.5z" style="fill: currentcolor;"></path></svg></span><span class="chevereto-pup-button-text">上传图片</span></button></div>';
-                    $(comment_selector_).after(insertHtml)
+                    let insertHtml = '<div id="zz-img-show"></div><div class="zz-add-img "><input id="zz-img-file" type="file" accept="image/*" multiple="multiple"><button id="zz-img-add" type="button"><span class="chevereto-pup-button-icon"><svg class="chevereto-pup-button-icon" xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><path d="M76.7 87.5c12.8 0 23.3-13.3 23.3-29.4 0-13.6-5.2-25.7-15.4-27.5 0 0-3.5-0.7-5.6 1.7 0 0 0.6 9.4-2.9 12.6 0 0 8.7-32.4-23.7-32.4 -29.3 0-22.5 34.5-22.5 34.5 -5-6.4-0.6-19.6-0.6-19.6 -2.5-2.6-6.1-2.5-6.1-2.5C10.9 25 0 39.1 0 54.6c0 15.5 9.3 32.7 29.3 32.7 2 0 6.4 0 11.7 0V68.5h-13l22-22 22 22H59v18.8C68.6 87.4 76.7 87.5 76.7 87.5z" style="fill: currentcolor;"></path></svg></span><span class="chevereto-pup-button-text">上传</span></button></div>';
+                    if (typeof comment_selector_ != 'undefined'){
+                        $(comment_selector_).after(insertHtml)
+                    }
                 }
             }
             smms_node.init()
