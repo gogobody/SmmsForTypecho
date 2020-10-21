@@ -37,12 +37,12 @@ class SmmsForTypecho_Plugin implements Typecho_Plugin_Interface
      */
     public static function activate()
     {
-        Typecho_Plugin::factory('admin/header.php')->header = array('SmmsForTypecho_Plugin', 'admin_scripts_css');
-        Typecho_Plugin::factory('admin/write-post.php')->bottom = array('SmmsForTypecho_Plugin', 'admin_writepost_scripts');
+        Typecho_Plugin::factory('admin/header.php')->header_1001 = array('SmmsForTypecho_Plugin', 'admin_scripts_css');
+        Typecho_Plugin::factory('admin/write-post.php')->bottom_1001 = array('SmmsForTypecho_Plugin', 'admin_writepost_scripts');
 
-        Typecho_Plugin::factory('Widget_Archive')->beforeRender = array('SmmsForTypecho_Plugin','Widget_Archive_beforeRender');
+        Typecho_Plugin::factory('Widget_Archive')->beforeRender_1001 = array('SmmsForTypecho_Plugin','Widget_Archive_beforeRender');
 
-        Typecho_Plugin::factory('Widget_Archive')->afterRender = array('SmmsForTypecho_Plugin','Widget_Archive_afterRender');
+        Typecho_Plugin::factory('Widget_Archive')->afterRender_1001 = array('SmmsForTypecho_Plugin','Widget_Archive_afterRender');
 
         plugin_activation_cretable();
         Helper::addAction('multi-upload', 'SmmsForTypecho_Action');
@@ -123,12 +123,18 @@ class SmmsForTypecho_Plugin implements Typecho_Plugin_Interface
 
     }
     public static function admin_scripts_css($header){
-        echo $header;
-//        SmmsForTypecho_Plugin::add_scripts_css();
+        if (Typecho_Widget::widget('Widget_User')->hasLogin()) {
+            echo $header;
 
-        echo '<link rel="stylesheet" href="'. SMMS_URL . 'css/input.min.css'.'" type="text/css"/>';
-        echo '<link rel="stylesheet" href="'. SMMS_URL . 'css/modal.css'.'" type="text/css"/>';
+            echo '<link rel="stylesheet" href="'. SMMS_URL . 'css/input.min.css'.'" type="text/css"/>';
+            echo '<link rel="stylesheet" href="'. SMMS_URL . 'css/modal.css'.'" type="text/css"/>';
+        }
         return $header;
+//        print_r($header);
+//        $header = $header.'<link rel="stylesheet" href="'. SMMS_URL . 'css/input.min.css'.'" type="text/css"/>'.
+//            '<link rel="stylesheet" href="'. SMMS_URL . 'css/modal.css'.'" type="text/css"/>';
+//        return $header;
+
     }
 
     public static function admin_writepost_scripts($post){
@@ -136,16 +142,18 @@ class SmmsForTypecho_Plugin implements Typecho_Plugin_Interface
         if (!$option->Content_){
             return;
         }
+        if (Typecho_Widget::widget('Widget_User')->hasLogin()) {
+            echo '<script src="'. SMMS_URL . 'js/content.min.js'. '"></script>';
+            echo '<script src="'. SMMS_URL . 'js/modal.min.js'. '"></script>';
 
-        echo '<script src="'. SMMS_URL . 'js/content.min.js'. '"></script>';
-        echo '<script src="'. SMMS_URL . 'js/modal.min.js'. '"></script>';
+            ?>
+            <script>
+                let tmpHtml = '<?php echo outHtml();?>'
+                $("#text").parent().append(tmpHtml);
+            </script>
+            <?php
+        }
 
-        ?>
-        <script>
-            let tmpHtml = '<?php echo outHtml();?>'
-            $("#text").parent().append(tmpHtml);
-        </script>
-        <?php
     }
 
 

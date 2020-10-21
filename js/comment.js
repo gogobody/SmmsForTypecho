@@ -4,7 +4,7 @@ smms = {
             insertAtCaret: function (myValue) {
                 var $t = $(this)[0];
                 //IE
-                if (document.selection) {
+                if (document.selection||'input[data-addarea]') {
                     this.focus();
                     sel = document.selection.createRange();
                     sel.text = myValue;
@@ -43,11 +43,12 @@ smms = {
                     data: formData,
                     dataType:'json',
                     beforeSend: function (xhr) {
-                        $('#zz-img-add').text('Uploading...')
+                        $('#zz-img-add .chevereto-pup-button-icon').hide()
+                        $('#zz-img-add .chevereto-pup-button-text').text('upload...')
                     },
                     success: function (res) {
-                        console.log(res);
-                        $("#zz-img-add").text('上传图片');
+                        $('#zz-img-add .chevereto-pup-button-icon').show()
+                        $("#zz-img-add .chevereto-pup-button-text").text('上传');
                         $('#zz-img-show').append('<img src="' + res.data.url + '" />');
                         //$('textarea[name="comment"]').val($('textarea[name="comment"]').val() + '<img src="' + res.data.url + '" />').focus();
                         if (typeof comment_selector_!="undefined" ){
