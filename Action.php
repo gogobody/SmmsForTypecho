@@ -38,7 +38,7 @@ class Upload extends Widget_Abstract_Contents implements Widget_Interface_Do
             return true;
         }
 
-        if (!@mkdir($last)) {
+        if (!@mkdir($last,0777,true)) {
             return false;
         }
 
@@ -508,19 +508,23 @@ class Upload extends Widget_Abstract_Contents implements Widget_Interface_Do
      * @access public
      * @return void
      */
+//    public function action()
+//    {
+//        echo "hello upload";
+//        if ($this->user->pass('contributor', true) && $this->request->isPost()) {
+//            $this->security->protect();
+//            if ($this->request->is('do=modify&cid')) {
+//                $this->modify();
+//            } else {
+//                $this->upload();
+//            }
+//        } else {
+//            $this->response->setStatus(403);
+//        }
+//    }
     public function action()
     {
-//        echo "hello upload";
-        if ($this->user->pass('contributor', true) && $this->request->isPost()) {
-            $this->security->protect();
-            if ($this->request->is('do=modify&cid')) {
-                $this->modify();
-            } else {
-                $this->upload();
-            }
-        } else {
-            $this->response->setStatus(403);
-        }
+        // TODO: Implement action() method.
     }
 }
 
@@ -537,12 +541,11 @@ class SmmsForTypecho_Action extends Typecho_Widget implements Widget_Interface_D
         $lastname = $_FILES['smfile']['tmp_name'];
 
         $date = new Typecho_Date();
-        $wp_uploads = Typecho_Common::url(defined('__TYPECHO_UPLOAD_DIR__') ? __TYPECHO_UPLOAD_DIR__ : self::UPLOAD_DIR,
+        $tp_uploads = Typecho_Common::url(defined('__TYPECHO_UPLOAD_DIR__') ? __TYPECHO_UPLOAD_DIR__ : self::UPLOAD_DIR,
                 defined('__TYPECHO_UPLOAD_ROOT_DIR__') ? __TYPECHO_UPLOAD_ROOT_DIR__ : __TYPECHO_ROOT_DIR__)
             . '/' . $date->year . '/' . $date->month;
-
         //创建上传目录
-        $tpath = $wp_uploads.'/smms_imglist/';
+        $tpath = $tp_uploads.'/smms_imglist/';
         if (!is_dir($tpath)) {
             if (!Upload::makeUploadDir($tpath)) {
                 return false;

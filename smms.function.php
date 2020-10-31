@@ -20,8 +20,15 @@ function plugin_activation_cretable()
 	if (!empty($tdb->collate)) {
 		$charset_collate .= " COLLATE {$tdb->collate}";
 	}
-
-	$sql = "CREATE TABLE " . MY_NEW_TABLE . " (
+    $db = Typecho_Db::get();
+    $prefix = $db->getPrefix();
+    $sql = 'SHOW TABLES LIKE "' . $prefix . 'smms_image_list' . '"';
+    $checkTabel = $db->query($sql);
+    $row = $checkTabel->fetchAll();
+    if ('1' == count($row)) {
+        // exist
+    }else{
+        $sql = "CREATE TABLE " . MY_NEW_TABLE . " (
 		id int NOT NULL AUTO_INCREMENT PRIMARY KEY,
 		width int NOT NULL,
 		height int NOT NULL,
@@ -30,7 +37,9 @@ function plugin_activation_cretable()
 		url varchar(255) NOT NULL
 	) $charset_collate;";
 
-    $tdb->query($sql);
+        $tdb->query($sql);
+    }
+
 }
 
 

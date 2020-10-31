@@ -25,6 +25,7 @@ function outHtml(){
         '</div></div><div class="mask"></div></div>';
     return $html_;
 }
+define('UPLOAD_DIR' , '/usr/uploads');
 
 class SmmsForTypecho_Plugin implements Typecho_Plugin_Interface
 {
@@ -37,6 +38,18 @@ class SmmsForTypecho_Plugin implements Typecho_Plugin_Interface
      */
     public static function activate()
     {
+        // 创建 文件夹
+        $tp_uploads = Typecho_Common::url(defined('__TYPECHO_UPLOAD_DIR__') ? __TYPECHO_UPLOAD_DIR__ : UPLOAD_DIR,
+            defined('__TYPECHO_UPLOAD_ROOT_DIR__') ? __TYPECHO_UPLOAD_ROOT_DIR__ : __TYPECHO_ROOT_DIR__);
+        if(!is_dir($tp_uploads)){
+            $res = @mkdir($tp_uploads,0777,true);
+            if(!$res){
+                $error = error_get_last();
+
+                throw new Typecho_Plugin_Exception('创建文件夹失败请手动创建,并给权限0777：'.$tp_uploads);
+            }
+        }
+
         Typecho_Plugin::factory('admin/header.php')->header_1001 = array('SmmsForTypecho_Plugin', 'admin_scripts_css');
         Typecho_Plugin::factory('admin/write-post.php')->bottom_1001 = array('SmmsForTypecho_Plugin', 'admin_writepost_scripts');
 
@@ -49,6 +62,8 @@ class SmmsForTypecho_Plugin implements Typecho_Plugin_Interface
 
         //add panel
         Helper::addPanel(3, 'SmmsForTypecho/manage.php', 'SMMS图床', '管理SMMS图床', 'administrator'); //editor //contributor
+
+
 
     }
     
@@ -63,6 +78,7 @@ class SmmsForTypecho_Plugin implements Typecho_Plugin_Interface
     public static function deactivate(){
         plugin_deactivation_deltable();
         Helper::removePanel(3, 'SmmsForTypecho/manage.php');
+        Helper::removeAction('multi-upload');
     }
     
     /**
