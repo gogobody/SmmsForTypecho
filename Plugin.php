@@ -116,11 +116,19 @@ class SmmsForTypecho_Plugin implements Typecho_Plugin_Interface
         ), 1, _t($language[9]), _t($language[10]));
         $form->addInput($Comment_);
 
+        // 是否保留本地文件，这个选项表示还是会上传到sm ，但是不会保留本地副本
         $Nolocal_ = new Typecho_Widget_Helper_Form_Element_Radio('Nolocal_', array(
             1 => _t('启用'),
             0 => _t('关闭'),
         ), 1, _t($language[11]), _t($language[12]));
         $form->addInput($Nolocal_);
+
+        // 只上传到本地，不上传到SM
+        $localOnly = new Typecho_Widget_Helper_Form_Element_Radio('localOnly', array(
+            1 => _t('启用'),
+            0 => _t('关闭'),
+        ), 0, "只上传到本地", "启用后文件只会上传到本地不会上传到sm（上面选项将失效）");
+        $form->addInput($localOnly);
     }
     
     /**
