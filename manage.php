@@ -21,10 +21,14 @@ if (@$_POST['action'] == 'delete' || @$_POST['action2'] == 'delete') {
             $delete = $tdb->delete('table.' . MY_NEW_TABLE_NAME)->where('hash = ?', $v);
             $deletedRows = $tdb->query($delete);
             $smapi->Delete($v);
-            $rooturl = Helper::options()->rootUrl;
             // delete local file here
-            if (substr($row['url'], 0, strlen($rooturl)) === $rooturl){
-                var_dump(strrchr($row['url'], $rooturl));
+            $options = Helper::options();
+            $rooturl = $options->rootUrl;
+            $plugin_config = $options->plugin('SmmsForTypecho'); // 获取 后台设置
+            // 是否只上传到本地
+            // 返回相对存储路径
+            $localOnly = $plugin_config->localOnly;
+            if ($localOnly && substr($row['url'], 0, strlen($rooturl)) === $rooturl){
                 $res_path = substr($row['url'], strlen($rooturl));
                 unlink(__TYPECHO_ROOT_DIR__ . $res_path);
             }
