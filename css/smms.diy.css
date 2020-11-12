@@ -7,6 +7,7 @@
 }
 
 input#zz-img-file {
+    display: none;
     position: relative;
     float: left;
     opacity: 0;

@@ -33,6 +33,7 @@ smms = {
         })
 
         $("#zz-img-add").unbind('click').bind('click',function (e){
+
             $('#zz-img-file').click();
         })
         $('#zz-img-file').change(function () {
