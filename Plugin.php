@@ -228,7 +228,6 @@ class SmmsForTypecho_Plugin implements Typecho_Plugin_Interface
                 }
             }
             smms_node.init()
-
         </script>
         <?php
         echo '<script src="'. SMMS_URL . 'js/comment.min.js'. '"></script>';
