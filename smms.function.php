@@ -22,22 +22,40 @@ function plugin_activation_cretable()
 	}
     $db = Typecho_Db::get();
     $prefix = $db->getPrefix();
-    $sql = 'SHOW TABLES LIKE "' . $prefix . 'smms_image_list' . '"';
-    $checkTabel = $db->query($sql);
-    $row = $checkTabel->fetchAll();
-    if ('1' == count($row)) {
-        // exist
+    $type = explode('_', $db->getAdapterName());
+    $type = array_pop($type);
+    if($type == "SQLite"){
+        $sql ="SELECT count(*) FROM sqlite_master WHERE type='table' AND name='".$prefix."circle_follow';";
+        $checkTabel = $db->query($sql);
+        $row = $checkTabel->fetchAll();
+        if ($row[0]["count(*)"] == '0'){
+            $sql = "CREATE TABLE " . MY_NEW_TABLE . " (
+            id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+            width INTEGER NOT NULL,
+            height INTEGER NOT NULL,
+            size INTEGER NOT NULL,
+            hash varchar(255) NOT NULL,
+            url varchar(255) NOT NULL
+	        ) $charset_collate;";
+            $tdb->query($sql);
+        }
     }else{
-        $sql = "CREATE TABLE " . MY_NEW_TABLE . " (
-		id int NOT NULL AUTO_INCREMENT PRIMARY KEY,
-		width int NOT NULL,
-		height int NOT NULL,
-		size int NOT NULL,
-		hash varchar(255) NOT NULL,
-		url varchar(255) NOT NULL
-	) $charset_collate;";
-
-        $tdb->query($sql);
+        $sql = 'SHOW TABLES LIKE "' . $prefix . 'smms_image_list' . '"';
+        $checkTabel = $db->query($sql);
+        $row = $checkTabel->fetchAll();
+        if ('1' == count($row)) {
+            // exist
+        }else{
+            $sql = "CREATE TABLE " . MY_NEW_TABLE . " (
+            id int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+            width int NOT NULL,
+            height int NOT NULL,
+            size int NOT NULL,
+            hash varchar(255) NOT NULL,
+            url varchar(255) NOT NULL
+	        ) $charset_collate;";
+            $tdb->query($sql);
+        }
     }
 
 }
