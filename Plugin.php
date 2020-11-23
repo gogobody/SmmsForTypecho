@@ -179,22 +179,27 @@ class SmmsForTypecho_Plugin implements Typecho_Plugin_Interface
         }
 
     }
-
-
-    public static function Widget_Archive_beforeRender($archive)
-    {
+    public static function checkOnecircleTheme($archive){
         $option = Helper::options()->plugin('SmmsForTypecho');
         if(Helper::options()->theme != 'onecircle'){ // this only for onecircle theme, to display in all pages
             if (!$option->Comment_){
-                return;
+                return false;
             }
             if (!$archive->is('single')) {
-                return;
+                return false;
             }
             if (!$archive->allow('comment')) {
-                return;
+                return false;
             }
+        }else{
+            if ($archive->is('neighbor') or $archive->is('metas')) return false;
         }
+        return true;
+    }
+
+    public static function Widget_Archive_beforeRender($archive)
+    {
+        if (!self::checkOnecircleTheme($archive)) return;
 
         echo '<link rel="stylesheet" href="'.SMMS_URL . 'css/smms.diy.min.css'.'" type="text/css"/>';
 
@@ -202,19 +207,8 @@ class SmmsForTypecho_Plugin implements Typecho_Plugin_Interface
 
     public static function Widget_Archive_afterRender($archive)
     {
+        if (!self::checkOnecircleTheme($archive)) return;
         $option = Helper::options()->plugin('SmmsForTypecho');
-        if(Helper::options()->theme != 'onecircle'){ // this only for onecircle theme, to display in all pages
-            if (!$option->Comment_){
-                return;
-            }
-            if (!$archive->is('single')) {
-                return;
-            }
-            if (!$archive->allow('comment')) {
-                return;
-            }
-        }
-
 
         echo '<script>comment_selector_="'.$option->Comment_Selector.'";</script>';
         ?>
