@@ -15,7 +15,7 @@ jQuery(document).ready(function ($) {
             var formData = new FormData();
             formData.append('smfile', f);
             $.ajax({
-                url: '/action/multi-upload?do=upload',
+                url: smms_url+'/action/multi-upload?do=upload',
                 type: 'POST',
                 processData: false,
                 contentType: false,
@@ -50,7 +50,7 @@ jQuery(document).ready(function ($) {
         pages = 2
         $("#img_list > li").remove()
         $.ajax({
-            url: '/action/multi-upload?do=list',
+            url: smms_url+'/action/multi-upload?do=list',
             type: 'GET',
             cache: false,
             dataType: 'json',
@@ -69,7 +69,7 @@ jQuery(document).ready(function ($) {
     $("#upload-btn").click(function () {
 
         $.ajax({
-            url: '/action/multi-upload?do=list',
+            url: smms_url+'/action/multi-upload?do=list',
             type: 'GET',
             cache: false,
             dataType: 'json',

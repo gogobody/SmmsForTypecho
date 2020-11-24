@@ -142,6 +142,7 @@ class SmmsForTypecho_Plugin implements Typecho_Plugin_Interface
     
     public static function add_scripts_css(){
         echo '<link rel="stylesheet" href="'.SMMS_URL . 'css/smms.diy.min.css'.'" type="text/css"/>';
+        echo '<script>smms_url="'.Helper::options()->index.'";</script>';
         echo '<script src="'. SMMS_URL . 'js/jquery.min.js'. '"></script>';
         echo '<script src="'. SMMS_URL . 'js/comment.min.js'. '"></script>';
 
@@ -167,6 +168,7 @@ class SmmsForTypecho_Plugin implements Typecho_Plugin_Interface
             return;
         }
         if (Typecho_Widget::widget('Widget_User')->hasLogin()) {
+            echo '<script>smms_url="'.Helper::options()->index.'";</script>';
             echo '<script src="'. SMMS_URL . 'js/content.min.js'. '"></script>';
             echo '<script src="'. SMMS_URL . 'js/modal.min.js'. '"></script>';
 
@@ -210,7 +212,7 @@ class SmmsForTypecho_Plugin implements Typecho_Plugin_Interface
         if (!self::checkOnecircleTheme($archive)) return;
         $option = Helper::options()->plugin('SmmsForTypecho');
 
-        echo '<script>comment_selector_="'.$option->Comment_Selector.'";</script>';
+        echo '<script>smms_url="'.Helper::options()->index.'";comment_selector_="'.$option->Comment_Selector.'";</script>';
         ?>
         <script>
             smms_node = {

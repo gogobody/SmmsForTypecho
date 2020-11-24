@@ -216,6 +216,8 @@ include 'table-js.php';
     }
 </script>
 <?php
+echo '<script>smms_url="'.Helper::options()->index.'";</script>';
+
 echo '<script src="'. SMMS_URL . 'js/content.js'. '"></script>';
 echo '<script src="'. SMMS_URL . 'js/modal.min.js'. '"></script>';
 ?>
