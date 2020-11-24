@@ -53,9 +53,9 @@ class SmmsForTypecho_Plugin implements Typecho_Plugin_Interface
         Typecho_Plugin::factory('admin/header.php')->header_1001 = array('SmmsForTypecho_Plugin', 'admin_scripts_css');
         Typecho_Plugin::factory('admin/write-post.php')->bottom_1001 = array('SmmsForTypecho_Plugin', 'admin_writepost_scripts');
 
-        Typecho_Plugin::factory('Widget_Archive')->beforeRender_1001 = array('SmmsForTypecho_Plugin','Widget_Archive_beforeRender');
+        Typecho_Plugin::factory('Widget_Archive@smms_before')->beforeRender_1001 = array('SmmsForTypecho_Plugin','Widget_Archive_beforeRender');
 
-        Typecho_Plugin::factory('Widget_Archive')->afterRender_1001 = array('SmmsForTypecho_Plugin','Widget_Archive_afterRender');
+        Typecho_Plugin::factory('Widget_Archive@smms_after')->afterRender_1001 = array('SmmsForTypecho_Plugin','Widget_Archive_afterRender');
 
         plugin_activation_cretable();
         Helper::addAction('multi-upload', 'SmmsForTypecho_Action');
