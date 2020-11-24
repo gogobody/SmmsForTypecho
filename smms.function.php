@@ -25,7 +25,7 @@ function plugin_activation_cretable()
     $type = explode('_', $db->getAdapterName());
     $type = array_pop($type);
     if($type == "SQLite"){
-        $sql ="SELECT count(*) FROM sqlite_master WHERE type='table' AND name='".$prefix."circle_follow';";
+        $sql ="SELECT count(*) FROM sqlite_master WHERE type='table' AND name='".MY_NEW_TABLE."';";
         $checkTabel = $db->query($sql);
         $row = $checkTabel->fetchAll();
         if ($row[0]["count(*)"] == '0'){
