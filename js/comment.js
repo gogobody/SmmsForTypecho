@@ -42,7 +42,7 @@ smms = {
                 var formData = new FormData();
                 formData.append('smfile', f);
                 $.ajax({
-                    url: '/action/multi-upload?do=upload',
+                    url: smms_url+'/action/multi-upload?do=upload',
                     type: 'POST',
                     processData: false,
                     contentType: false,
