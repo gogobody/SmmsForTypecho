@@ -2,7 +2,31 @@
  sm.ms 图床的typecho 插件 ，欢迎 star，pr  
 sm.ms 是一个好用免费的图床，因为不想把图片存服务器，所以写了这个插件
 
-#### 插件版本 v 1.0
+## 注意  
+typecho 1.0 版本的时候在判断是虚拟机的时候禁止上传附件。
+解决方案都一样：http://www.phpnote.net/index.php/Home/Article/index/id/54  
+首先我是找到var/Typecho/Common.php这个文件并更改415行左右的一个关于你服务器的函数。
+```
+public static function isAppEngine()
+{
+    return !empty($_SERVER['HTTP_APPNAME'])                     // SAE
+        || !!getenv('HTTP_BAE_ENV_APPID')                       // BAE
+        || !!getenv('SERVER_SOFTWARE')                          // BAE 3.0
+        || (ini_get('acl.app_id') && class_exists('Alibaba'))   // ACE
+        || (isset($_SERVER['SERVER_SOFTWARE']) && strpos($_SERVER['SERVER_SOFTWARE'],'Google App Engine') !== false) // GAE
+        ;
+}
+```  
+把这个函数直接改成:
+```
+public static function isAppEngine()
+{
+return false;
+}
+```
+然后去 typecho 目录下的 usr 目录下创建uploads 文件夹，给权限 0777 就好了。
+
+#### 插件版本 v 1.1
 #### 功能：
 1. 后台图片管理页面，以及写文章时的单独图片管理页，及插及用
 2. 支持批量上传图片到图床

@@ -7,6 +7,7 @@
 }
 
 input#zz-img-file {
+    display: none;
     position: relative;
     float: left;
     opacity: 0;
@@ -54,7 +55,6 @@ input#zz-img-file {
     transition: all .2s;
     outline: 0;
     color: #99a2aa;
-    border: none;
     cursor: pointer;
     border: 1px solid rgba(0,0,0,.15);
     background: white;
@@ -63,6 +63,7 @@ input#zz-img-file {
     text-shadow: none;
     height: 100%;
     width: 100%;
+    vertical-align: middle;
 }
 .comment_text img {
     display: block;

@@ -38,7 +38,7 @@ class Upload extends Widget_Abstract_Contents implements Widget_Interface_Do
             return true;
         }
 
-        if (!@mkdir($last)) {
+        if (!@mkdir($last,0777,true)) {
             return false;
         }
 
@@ -508,19 +508,23 @@ class Upload extends Widget_Abstract_Contents implements Widget_Interface_Do
      * @access public
      * @return void
      */
+//    public function action()
+//    {
+//        echo "hello upload";
+//        if ($this->user->pass('contributor', true) && $this->request->isPost()) {
+//            $this->security->protect();
+//            if ($this->request->is('do=modify&cid')) {
+//                $this->modify();
+//            } else {
+//                $this->upload();
+//            }
+//        } else {
+//            $this->response->setStatus(403);
+//        }
+//    }
     public function action()
     {
-//        echo "hello upload";
-        if ($this->user->pass('contributor', true) && $this->request->isPost()) {
-            $this->security->protect();
-            if ($this->request->is('do=modify&cid')) {
-                $this->modify();
-            } else {
-                $this->upload();
-            }
-        } else {
-            $this->response->setStatus(403);
-        }
+        // TODO: Implement action() method.
     }
 }
 
@@ -537,12 +541,11 @@ class SmmsForTypecho_Action extends Typecho_Widget implements Widget_Interface_D
         $lastname = $_FILES['smfile']['tmp_name'];
 
         $date = new Typecho_Date();
-        $wp_uploads = Typecho_Common::url(defined('__TYPECHO_UPLOAD_DIR__') ? __TYPECHO_UPLOAD_DIR__ : self::UPLOAD_DIR,
+        $tp_uploads = Typecho_Common::url(defined('__TYPECHO_UPLOAD_DIR__') ? __TYPECHO_UPLOAD_DIR__ : self::UPLOAD_DIR,
                 defined('__TYPECHO_UPLOAD_ROOT_DIR__') ? __TYPECHO_UPLOAD_ROOT_DIR__ : __TYPECHO_ROOT_DIR__)
             . '/' . $date->year . '/' . $date->month;
-
         //创建上传目录
-        $tpath = $wp_uploads.'/smms_imglist/';
+        $tpath = $tp_uploads.'/'; // .'/smms_imglist/'
         if (!is_dir($tpath)) {
             if (!Upload::makeUploadDir($tpath)) {
                 return false;
@@ -562,6 +565,34 @@ class SmmsForTypecho_Action extends Typecho_Widget implements Widget_Interface_D
         $options = Helper::options();
 
         $plugin_config = $options->plugin('SmmsForTypecho'); // 获取 后台设置
+        // 是否只上传到本地
+        // 返回相对存储路径
+        $localOnly = $plugin_config->localOnly;
+        if($localOnly){
+            $relative_path = (defined('__TYPECHO_UPLOAD_DIR__') ? __TYPECHO_UPLOAD_DIR__ : self::UPLOAD_DIR)
+                . '/' . $date->year . '/' . $date->month . '/' . $fileName;
+            $localUrl = $options->rootUrl.$relative_path;
+            // save to db
+            list($width, $height, $type, $attr) = getimagesize($path);
+            $fsize = filesize($path);
+            $data['width']  = $width;
+            $data['height'] = $height;
+            $data['size']   = $fsize;
+            $data['hash']   = md5_file($path);
+            $data['url']    = $localUrl;
+
+            $insert = $tdb->insert('table.'.MY_NEW_TABLE_NAME)
+                ->rows($data);
+            $insertId = $tdb->query($insert);
+            // renturn json
+
+            $result = array();
+            $result["success"] = 1;
+            $result['data']['url'] = $localUrl;
+            $result['data']['size'] = $fsize;
+            $this->response->throwJson($result);
+            return $result;
+        }
 
         $auth = $plugin_config->Authorization_;
 

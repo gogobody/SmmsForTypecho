@@ -25,6 +25,7 @@ function outHtml(){
         '</div></div><div class="mask"></div></div>';
     return $html_;
 }
+define('UPLOAD_DIR' , '/usr/uploads');
 
 class SmmsForTypecho_Plugin implements Typecho_Plugin_Interface
 {
@@ -37,18 +38,32 @@ class SmmsForTypecho_Plugin implements Typecho_Plugin_Interface
      */
     public static function activate()
     {
-        Typecho_Plugin::factory('admin/header.php')->header = array('SmmsForTypecho_Plugin', 'admin_scripts_css');
-        Typecho_Plugin::factory('admin/write-post.php')->bottom = array('SmmsForTypecho_Plugin', 'admin_writepost_scripts');
+        // 创建 文件夹
+        $tp_uploads = Typecho_Common::url(defined('__TYPECHO_UPLOAD_DIR__') ? __TYPECHO_UPLOAD_DIR__ : UPLOAD_DIR,
+            defined('__TYPECHO_UPLOAD_ROOT_DIR__') ? __TYPECHO_UPLOAD_ROOT_DIR__ : __TYPECHO_ROOT_DIR__);
+        if(!is_dir($tp_uploads)){
+            $res = @mkdir($tp_uploads,0777,true);
+            if(!$res){
+                $error = error_get_last();
 
-        Typecho_Plugin::factory('Widget_Archive')->beforeRender = array('SmmsForTypecho_Plugin','Widget_Archive_beforeRender');
+                throw new Typecho_Plugin_Exception('创建文件夹失败请手动创建,并给权限0777：'.$tp_uploads);
+            }
+        }
 
-        Typecho_Plugin::factory('Widget_Archive')->afterRender = array('SmmsForTypecho_Plugin','Widget_Archive_afterRender');
+        Typecho_Plugin::factory('admin/header.php')->header_1001 = array('SmmsForTypecho_Plugin', 'admin_scripts_css');
+        Typecho_Plugin::factory('admin/write-post.php')->bottom_1001 = array('SmmsForTypecho_Plugin', 'admin_writepost_scripts');
+
+        Typecho_Plugin::factory('Widget_Archive')->beforeRender_1001 = array('SmmsForTypecho_Plugin','Widget_Archive_beforeRender');
+
+        Typecho_Plugin::factory('Widget_Archive')->afterRender_1001 = array('SmmsForTypecho_Plugin','Widget_Archive_afterRender');
 
         plugin_activation_cretable();
         Helper::addAction('multi-upload', 'SmmsForTypecho_Action');
 
         //add panel
         Helper::addPanel(3, 'SmmsForTypecho/manage.php', 'SMMS图床', '管理SMMS图床', 'administrator'); //editor //contributor
+
+
 
     }
     
@@ -63,6 +78,7 @@ class SmmsForTypecho_Plugin implements Typecho_Plugin_Interface
     public static function deactivate(){
         plugin_deactivation_deltable();
         Helper::removePanel(3, 'SmmsForTypecho/manage.php');
+        Helper::removeAction('multi-upload');
     }
     
     /**
@@ -100,11 +116,19 @@ class SmmsForTypecho_Plugin implements Typecho_Plugin_Interface
         ), 1, _t($language[9]), _t($language[10]));
         $form->addInput($Comment_);
 
+        // 是否保留本地文件，这个选项表示还是会上传到sm ，但是不会保留本地副本
         $Nolocal_ = new Typecho_Widget_Helper_Form_Element_Radio('Nolocal_', array(
             1 => _t('启用'),
             0 => _t('关闭'),
         ), 1, _t($language[11]), _t($language[12]));
         $form->addInput($Nolocal_);
+
+        // 只上传到本地，不上传到SM
+        $localOnly = new Typecho_Widget_Helper_Form_Element_Radio('localOnly', array(
+            1 => _t('启用'),
+            0 => _t('关闭'),
+        ), 0, "只上传到本地", "启用后文件只会上传到本地不会上传到sm（上面选项将失效）");
+        $form->addInput($localOnly);
     }
     
     /**
@@ -118,17 +142,24 @@ class SmmsForTypecho_Plugin implements Typecho_Plugin_Interface
     
     public static function add_scripts_css(){
         echo '<link rel="stylesheet" href="'.SMMS_URL . 'css/smms.diy.min.css'.'" type="text/css"/>';
+        echo '<script>smms_url="'.Helper::options()->index.'";</script>';
         echo '<script src="'. SMMS_URL . 'js/jquery.min.js'. '"></script>';
         echo '<script src="'. SMMS_URL . 'js/comment.min.js'. '"></script>';
 
     }
     public static function admin_scripts_css($header){
-        echo $header;
-//        SmmsForTypecho_Plugin::add_scripts_css();
+        if (Typecho_Widget::widget('Widget_User')->hasLogin()) {
+            echo $header;
 
-        echo '<link rel="stylesheet" href="'. SMMS_URL . 'css/input.min.css'.'" type="text/css"/>';
-        echo '<link rel="stylesheet" href="'. SMMS_URL . 'css/modal.css'.'" type="text/css"/>';
+            echo '<link rel="stylesheet" href="'. SMMS_URL . 'css/input.min.css'.'" type="text/css"/>';
+            echo '<link rel="stylesheet" href="'. SMMS_URL . 'css/modal.css'.'" type="text/css"/>';
+        }
         return $header;
+//        print_r($header);
+//        $header = $header.'<link rel="stylesheet" href="'. SMMS_URL . 'css/input.min.css'.'" type="text/css"/>'.
+//            '<link rel="stylesheet" href="'. SMMS_URL . 'css/modal.css'.'" type="text/css"/>';
+//        return $header;
+
     }
 
     public static function admin_writepost_scripts($post){
@@ -136,33 +167,41 @@ class SmmsForTypecho_Plugin implements Typecho_Plugin_Interface
         if (!$option->Content_){
             return;
         }
+        if (Typecho_Widget::widget('Widget_User')->hasLogin()) {
+            echo '<script>smms_url="'.Helper::options()->index.'";</script>';
+            echo '<script src="'. SMMS_URL . 'js/content.min.js'. '"></script>';
+            echo '<script src="'. SMMS_URL . 'js/modal.min.js'. '"></script>';
 
-        echo '<script src="'. SMMS_URL . 'js/content.min.js'. '"></script>';
-        echo '<script src="'. SMMS_URL . 'js/modal.min.js'. '"></script>';
+            ?>
+            <script>
+                let tmpHtml = '<?php echo outHtml();?>'
+                $("#text").parent().append(tmpHtml);
+            </script>
+            <?php
+        }
 
-        ?>
-        <script>
-            let tmpHtml = '<?php echo outHtml();?>'
-            $("#text").parent().append(tmpHtml);
-        </script>
-        <?php
     }
-
-
-    public static function Widget_Archive_beforeRender($archive)
-    {
+    public static function checkOnecircleTheme($archive){
         $option = Helper::options()->plugin('SmmsForTypecho');
         if(Helper::options()->theme != 'onecircle'){ // this only for onecircle theme, to display in all pages
             if (!$option->Comment_){
-                return;
+                return false;
             }
             if (!$archive->is('single')) {
-                return;
+                return false;
             }
             if (!$archive->allow('comment')) {
-                return;
+                return false;
             }
+        }else{
+            if ($archive->is('neighbor') or $archive->is('metas')) return false;
         }
+        return true;
+    }
+
+    public static function Widget_Archive_beforeRender($archive)
+    {
+        if (!self::checkOnecircleTheme($archive)) return;
 
         echo '<link rel="stylesheet" href="'.SMMS_URL . 'css/smms.diy.min.css'.'" type="text/css"/>';
 
@@ -170,21 +209,10 @@ class SmmsForTypecho_Plugin implements Typecho_Plugin_Interface
 
     public static function Widget_Archive_afterRender($archive)
     {
+        if (!self::checkOnecircleTheme($archive)) return;
         $option = Helper::options()->plugin('SmmsForTypecho');
-        if(Helper::options()->theme != 'onecircle'){ // this only for onecircle theme, to display in all pages
-            if (!$option->Comment_){
-                return;
-            }
-            if (!$archive->is('single')) {
-                return;
-            }
-            if (!$archive->allow('comment')) {
-                return;
-            }
-        }
 
-
-        echo '<script>comment_selector_="'.$option->Comment_Selector.'";</script>';
+        echo '<script>smms_url="'.Helper::options()->index.'";comment_selector_="'.$option->Comment_Selector.'";</script>';
         ?>
         <script>
             smms_node = {
@@ -196,7 +224,6 @@ class SmmsForTypecho_Plugin implements Typecho_Plugin_Interface
                 }
             }
             smms_node.init()
-
         </script>
         <?php
         echo '<script src="'. SMMS_URL . 'js/comment.min.js'. '"></script>';

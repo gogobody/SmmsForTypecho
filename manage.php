@@ -17,9 +17,21 @@ if (@$_POST['action'] == 'delete' || @$_POST['action2'] == 'delete') {
     $smapi = new SMApi($auth);
     if (array_key_exists('imglist',$_POST)){
         foreach ($_POST['imglist'] as $v) {
+            $row = $tdb->fetchRow($tdb->select()->from('table.'.MY_NEW_TABLE_NAME)->where('hash = ?', $v));
             $delete = $tdb->delete('table.' . MY_NEW_TABLE_NAME)->where('hash = ?', $v);
             $deletedRows = $tdb->query($delete);
             $smapi->Delete($v);
+            // delete local file here
+            $options = Helper::options();
+            $rooturl = $options->rootUrl;
+            $plugin_config = $options->plugin('SmmsForTypecho'); // 获取 后台设置
+            // 是否只上传到本地
+            // 返回相对存储路径
+            $localOnly = $plugin_config->localOnly;
+            if ($localOnly && substr($row['url'], 0, strlen($rooturl)) === $rooturl){
+                $res_path = substr($row['url'], strlen($rooturl));
+                unlink(__TYPECHO_ROOT_DIR__ . $res_path);
+            }
         }
     }
 
@@ -186,7 +198,7 @@ $all_pages = (int)($count / 10) + 1;
     </div>
 </div>
 <div id="background" class="background" style="display: none; "></div>
-<div id="progressBar" class="progressBar" style="display: none; ">删除中，请稍等...</div>
+<div id="progressBar" class="progressBar" style="display: none; ">请稍等...</div>
 <?php
 include 'copyright.php';
 include 'common-js.php';
@@ -204,6 +216,8 @@ include 'table-js.php';
     }
 </script>
 <?php
+echo '<script>smms_url="'.Helper::options()->index.'";</script>';
+
 echo '<script src="'. SMMS_URL . 'js/content.js'. '"></script>';
 echo '<script src="'. SMMS_URL . 'js/modal.min.js'. '"></script>';
 ?>
