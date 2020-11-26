@@ -26,13 +26,36 @@ return false;
 ```
 然后去 typecho 目录下的 usr 目录下创建uploads 文件夹，给权限 0777 就好了。
 
-#### 插件版本 v 1.1
+#### 插件版本 v 1.2
 #### 功能：
 1. 后台图片管理页面，以及写文章时的单独图片管理页，及插及用
 2. 支持批量上传图片到图床
 3. 支持上传图片到自己的 smms 免费空间（自己管理的空间是容量有限的）
 4. 支持评论框上传图片（需要设置）
 
+#### 使用
+为了维护 HTML 文档的正确性,使用方式改为手动启用
+插件不自带jquery，需要自行引入 jquery 。  
+启用插件后  
+在主题header部分插入：  
+```
+<?php Typecho_Plugin::factory('SmmsPlugin')->header($this); ?>
+```
+footer部分插入：  
+```
+<?php Typecho_Plugin::factory('SmmsPlugin')->footer($this); ?>
+```
+
+如果有设置 pjax，则pjax插入以下代码:  
+```
+    if (typeof smms_node!="undefined" && typeof smms!="undefined"){
+        smms_node.init()
+        smms.init()
+    }
+    if (typeof smms!="undefined"){
+        smms.init()
+    }
+```
 #### 关于评论框设置
 因为不同的作者的主题的评论框代码不一样，所以需要我们自己手动定位到评论框。    
 在插件的设置中填入 评论框的选择器，比如评论框 '<textarea id="text">',那么填入 #text   

@@ -49,7 +49,7 @@ input#zz-img-file {
     font-size: 12px;
 }
 #zz-img-add {
-    line-height: normal;
+    line-height: inherit;
     -webkit-transition: all .2s;
     -o-transition: all .2s;
     transition: all .2s;

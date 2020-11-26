@@ -7,7 +7,7 @@ define('__TYPECHO_DEBUG__', true);
  * 
  * @package SmmsForTypecho
  * @author gogobody
- * @version 1.0.0
+ * @version 1.2
  * @link https://github.com/gogobody/SmmsForTypecho
  */
 //设置语言
@@ -53,9 +53,9 @@ class SmmsForTypecho_Plugin implements Typecho_Plugin_Interface
         Typecho_Plugin::factory('admin/header.php')->header_1001 = array('SmmsForTypecho_Plugin', 'admin_scripts_css');
         Typecho_Plugin::factory('admin/write-post.php')->bottom_1001 = array('SmmsForTypecho_Plugin', 'admin_writepost_scripts');
 
-        Typecho_Plugin::factory('Widget_Archive')->beforeRender_1001 = array('SmmsForTypecho_Plugin','Widget_Archive_beforeRender');
-
-        Typecho_Plugin::factory('Widget_Archive')->afterRender_1001 = array('SmmsForTypecho_Plugin','Widget_Archive_afterRender');
+//        Typecho_Plugin::factory('Widget_Archive')->beforeRender_1001 = array('SmmsForTypecho_Plugin','Widget_Archive_beforeRender');
+//
+//        Typecho_Plugin::factory('Widget_Archive')->afterRender_1001 = array('SmmsForTypecho_Plugin','Widget_Archive_afterRender');
 
         plugin_activation_cretable();
         Helper::addAction('multi-upload', 'SmmsForTypecho_Action');
@@ -63,7 +63,9 @@ class SmmsForTypecho_Plugin implements Typecho_Plugin_Interface
         //add panel
         Helper::addPanel(3, 'SmmsForTypecho/manage.php', 'SMMS图床', '管理SMMS图床', 'administrator'); //editor //contributor
 
-
+        //
+        Typecho_Plugin::factory('SmmsPlugin')->header = array('SmmsForTypecho_Plugin','Widget_Archive_beforeRender');
+        Typecho_Plugin::factory('SmmsPlugin')->footer = array('SmmsForTypecho_Plugin','Widget_Archive_afterRender');
 
     }
     
@@ -211,20 +213,9 @@ class SmmsForTypecho_Plugin implements Typecho_Plugin_Interface
     {
         if (!self::checkOnecircleTheme($archive)) return;
         $option = Helper::options()->plugin('SmmsForTypecho');
-
         echo '<script>smms_url="'.Helper::options()->index.'";comment_selector_="'.$option->Comment_Selector.'";</script>';
         ?>
-        <script>
-            smms_node = {
-                init:function () {
-                    let insertHtml = '<div id="zz-img-show"></div><div class="zz-add-img "><input id="zz-img-file" type="file" accept="image/*" multiple="multiple"><button id="zz-img-add" type="button"><span class="chevereto-pup-button-icon"><svg class="chevereto-pup-button-icon" xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><path d="M76.7 87.5c12.8 0 23.3-13.3 23.3-29.4 0-13.6-5.2-25.7-15.4-27.5 0 0-3.5-0.7-5.6 1.7 0 0 0.6 9.4-2.9 12.6 0 0 8.7-32.4-23.7-32.4 -29.3 0-22.5 34.5-22.5 34.5 -5-6.4-0.6-19.6-0.6-19.6 -2.5-2.6-6.1-2.5-6.1-2.5C10.9 25 0 39.1 0 54.6c0 15.5 9.3 32.7 29.3 32.7 2 0 6.4 0 11.7 0V68.5h-13l22-22 22 22H59v18.8C68.6 87.4 76.7 87.5 76.7 87.5z" style="fill: currentcolor;"></path></svg></span><span class="chevereto-pup-button-text">上传</span></button></div>';
-                    if (typeof comment_selector_ != 'undefined'){
-                        $(comment_selector_).after(insertHtml)
-                    }
-                }
-            }
-            smms_node.init()
-        </script>
+        <script>smms_node={init:function(){var a='<div id="zz-img-show"></div><div class="zz-add-img "><input id="zz-img-file" type="file" accept="image/*" multiple="multiple"><button id="zz-img-add" type="button"><span class="chevereto-pup-button-icon"><svg class="chevereto-pup-button-icon" xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><path d="M76.7 87.5c12.8 0 23.3-13.3 23.3-29.4 0-13.6-5.2-25.7-15.4-27.5 0 0-3.5-0.7-5.6 1.7 0 0 0.6 9.4-2.9 12.6 0 0 8.7-32.4-23.7-32.4 -29.3 0-22.5 34.5-22.5 34.5 -5-6.4-0.6-19.6-0.6-19.6 -2.5-2.6-6.1-2.5-6.1-2.5C10.9 25 0 39.1 0 54.6c0 15.5 9.3 32.7 29.3 32.7 2 0 6.4 0 11.7 0V68.5h-13l22-22 22 22H59v18.8C68.6 87.4 76.7 87.5 76.7 87.5z" style="fill: currentcolor;"></path></svg></span><span class="chevereto-pup-button-text">上传</span></button></div>';if(typeof comment_selector_!="undefined"){$(comment_selector_).after(a)}}};smms_node.init();</script>
         <?php
         echo '<script src="'. SMMS_URL . 'js/comment.min.js'. '"></script>';
 
