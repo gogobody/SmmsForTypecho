@@ -72,5 +72,4 @@ smms = {
     }
 }
 
-
-smms.init()
+window.onload = smms.init()

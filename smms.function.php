@@ -65,8 +65,8 @@ function plugin_activation_cretable()
 // 插件停用时，运行回调方法删除数据表，删除options表中的插件版本号
 function plugin_deactivation_deltable()
 {
-	global $tdb;
-
-	$tdb->query("DROP TABLE IF EXISTS " . MY_NEW_TABLE);
+//	global $tdb;
+//  暂时不删除数据表
+//	$tdb->query("DROP TABLE IF EXISTS " . MY_NEW_TABLE);
 }
 
