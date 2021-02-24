@@ -7,7 +7,7 @@ define('__TYPECHO_DEBUG__', true);
  * 
  * @package SmmsForTypecho
  * @author gogobody
- * @version 1.2
+ * @version 1.3
  * @link https://github.com/gogobody/SmmsForTypecho
  */
 //设置语言
@@ -50,8 +50,8 @@ class SmmsForTypecho_Plugin implements Typecho_Plugin_Interface
             }
         }
 
-        Typecho_Plugin::factory('admin/header.php')->header_1001 = array('SmmsForTypecho_Plugin', 'admin_scripts_css');
-        Typecho_Plugin::factory('admin/write-post.php')->bottom_1001 = array('SmmsForTypecho_Plugin', 'admin_writepost_scripts');
+        Typecho_Plugin::factory('admin/header.php')->header = array('SmmsForTypecho_Plugin', 'admin_scripts_css');
+        Typecho_Plugin::factory('admin/write-post.php')->bottom = array('SmmsForTypecho_Plugin', 'admin_writepost_scripts');
 
 //        Typecho_Plugin::factory('Widget_Archive')->beforeRender_1001 = array('SmmsForTypecho_Plugin','Widget_Archive_beforeRender');
 //
@@ -151,17 +151,12 @@ class SmmsForTypecho_Plugin implements Typecho_Plugin_Interface
     }
     public static function admin_scripts_css($header){
         if (Typecho_Widget::widget('Widget_User')->hasLogin()) {
-            echo $header;
-
-            echo '<link rel="stylesheet" href="'. SMMS_URL . 'css/input.min.css'.'" type="text/css"/>';
-            echo '<link rel="stylesheet" href="'. SMMS_URL . 'css/modal.css'.'" type="text/css"/>';
+//            echo $header;
+            $header = $header.'<link rel="stylesheet" href="'. SMMS_URL . 'css/input.min.css'.'" type="text/css"/><link rel="stylesheet" href="'. SMMS_URL . 'css/modal.css'.'" type="text/css"/>';
+//            echo '<link rel="stylesheet" href="'. SMMS_URL . 'css/input.min.css'.'" type="text/css"/>';
+//            echo '<link rel="stylesheet" href="'. SMMS_URL . 'css/modal.css'.'" type="text/css"/>';
         }
         return $header;
-//        print_r($header);
-//        $header = $header.'<link rel="stylesheet" href="'. SMMS_URL . 'css/input.min.css'.'" type="text/css"/>'.
-//            '<link rel="stylesheet" href="'. SMMS_URL . 'css/modal.css'.'" type="text/css"/>';
-//        return $header;
-
     }
 
     public static function admin_writepost_scripts($post){
