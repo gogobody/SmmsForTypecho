@@ -112,7 +112,7 @@ $all_pages = (int)($count / 10) + 1;
                     </h2>
                     <div class="typecho-table-wrap">
 
-                        <table class="typecho-list-table widefat fixed striped users">
+                        <table class="typecho-list-table widefat striped users">
                         <thead>
                         <tr>
                             <th scope="col" id='cb' class='manage-column column-typecho check-column'>
