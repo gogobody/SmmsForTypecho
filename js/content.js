@@ -22,6 +22,7 @@ jQuery(document).ready(function ($) {
                 data: formData,
                 dataType: 'json',
                 success: function (res) {
+
                     if (res.data && res.data.url){
                         cnt++;
                         $('textarea[name="content"]').insertAtCaret('<img class="aligncenter" src="' + res.data.url + '" />');
@@ -32,7 +33,23 @@ jQuery(document).ready(function ($) {
                             location.reload()
                         }
 
+                    }else if (res.error && res.error){
+                        alert("接口返回："+ res.error.message)
+                    }else if (res.success && res.image.url){
+                        cnt++;
+                        $('textarea[name="content"]').insertAtCaret('<img class="aligncenter" src="' + res.image.url + '" />');
+                        $("html").find("iframe").contents().find("body").append('<img class="aligncenter" src="' + res.image.url + '" />');
+                        if (cnt === len){
+                            alert("上传成功！")
+                            label.text("上传")
+                            location.reload()
+                        }
+                    }else{
+                        alert(res)
+                        console.log(res)
                     }
+                    label.text("上传")
+                    ajaxbg.hide()
 
                 },
                 error:function (e) {

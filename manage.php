@@ -14,13 +14,19 @@ if (@$_POST['action'] == 'delete' || @$_POST['action2'] == 'delete') {
     $options = Helper::options();
     $plugin_config = $options->plugin('SmmsForTypecho'); // 获取 后台设置
     $auth = $plugin_config->Authorization_;
-    $smapi = new SMApi($auth);
+    $SourceImg_ = $plugin_config->SourceImg_;
+    $hello_name = $plugin_config->hello_name;
+    $hello_pswd = $plugin_config->hello_pswd;
+
+    $smapi = new SMApi($auth,$hello_name,$hello_pswd,$SourceImg_);
     if (array_key_exists('imglist',$_POST)){
         foreach ($_POST['imglist'] as $v) {
             $row = $tdb->fetchRow($tdb->select()->from('table.'.MY_NEW_TABLE_NAME)->where('hash = ?', $v));
             $delete = $tdb->delete('table.' . MY_NEW_TABLE_NAME)->where('hash = ?', $v);
             $deletedRows = $tdb->query($delete);
-            $smapi->Delete($v);
+            if ($SourceImg_ ==1){
+                $smapi->Delete($v);
+            }
             // delete local file here
             $options = Helper::options();
             $rooturl = $options->rootUrl;

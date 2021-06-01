@@ -2,12 +2,12 @@
 if (!defined('__TYPECHO_ROOT_DIR__')) exit;
 define('__TYPECHO_DEBUG__', true);
 /**
- * SmmsForTypecho_Plugin 是 sm.ms 图床的typecho插件
+ * SmmsForTypecho_Plugin 是 typecho 的图床插件，支持 sm.ms 图床和 helloimg.com 图床
  *
  * 
  * @package SmmsForTypecho
  * @author gogobody
- * @version 1.3
+ * @version 4.4
  * @link https://github.com/gogobody/SmmsForTypecho
  */
 //设置语言
@@ -16,9 +16,9 @@ include 'smms.function.php';
 include 'smapi.php';
 
 define('SMMS_URL', Helper::options()->pluginUrl . '/SmmsForTypecho/');  //返回当前插件的目录URI,
-define('SMMS_VERSION', "4.3");
+define('SMMS_VERSION', "4.4");
 function outHtml(){
-    $html_ = '<div class="admin-img-manager"><div class="admin-manage-img ui_button"><div class="button"  id="toggleModal" >SMMS 图床</div></div><div class="admin-upload-img"><label class="ui_button ui_button_primary" for="admin-img-file">上传文件</label><form><input id="admin-img-file" type="file" accept="image/*" multiple="multiple"></form></div><div class="modal">' .
+    $html_ = '<div class="admin-img-manager"><div class="admin-manage-img ui_button"><div class="button" id="toggleModal" >Typecho图床插件</div></div><div class="admin-upload-img"><label class="ui_button ui_button_primary" for="admin-img-file">上传文件</label><form><input id="admin-img-file" type="file" accept="image/*" multiple="multiple"></form></div><div class="modal">' .
         '<div class="modal-header">'.
         '<p class="close">×</p></div><div class="modal-content"><ul id="img_list"></ul><span id="pages-list"></span></div>'.
         '<div class="modal-footer"><input id="upload-btn" type="button" class="load btn" value="加载更多"><input type="button" class="close btn" value="关闭">'.
@@ -64,8 +64,8 @@ class SmmsForTypecho_Plugin implements Typecho_Plugin_Interface
         Helper::addPanel(3, 'SmmsForTypecho/manage.php', 'SMMS图床', '管理SMMS图床', 'administrator'); //editor //contributor
 
         //
-        Typecho_Plugin::factory('SmmsPlugin')->header = array('SmmsForTypecho_Plugin','Widget_Archive_beforeRender');
-        Typecho_Plugin::factory('SmmsPlugin')->footer = array('SmmsForTypecho_Plugin','Widget_Archive_afterRender');
+        Typecho_Plugin::factory('SmmsForTypecho')->header = array('SmmsForTypecho_Plugin','Widget_Archive_beforeRender');
+        Typecho_Plugin::factory('SmmsForTypecho')->footer = array('SmmsForTypecho_Plugin','Widget_Archive_afterRender');
 
     }
     
@@ -106,23 +106,35 @@ class SmmsForTypecho_Plugin implements Typecho_Plugin_Interface
         $Comment_Selector = new Typecho_Widget_Helper_Form_Element_Text('Comment_Selector', NULL, '#textarea','评论选择器', _t('因为不同的主题的评论框是不同主题开发者自定义的，所以需要手动定位<a target="_blank" href="">点击这里查看</a>'));
         $form->addInput($Comment_Selector);
 
+        $SourceImg = new Typecho_Widget_Helper_Form_Element_Radio('SourceImg_', array(
+            1 => _t('SM.MS'),
+            0 => _t('helloimg.com'),
+        ), 1, _t('选择图床源'), _t('选择图床源'));
+        $form->addInput($SourceImg);
+
+        $hello_name = new Typecho_Widget_Helper_Form_Element_Text('hello_name', NULL, '','hello图床用户名', _t('hello图床用户名（不用hello图床不用填）'));
+        $form->addInput($hello_name);
+
+        $hello_pswd = new Typecho_Widget_Helper_Form_Element_Text('hello_pswd', NULL, '','hello图床密码', _t('hello图床密码（不用hello图床不用填）'));
+        $form->addInput($hello_pswd);
+
         $Content_ = new Typecho_Widget_Helper_Form_Element_Radio('Content_', array(
             1 => _t('启用'),
             0 => _t('关闭'),
-        ), 1, _t($language[7]), _t($language[8]));
+        ), 1, _t('后台文章编辑启用图片上传'), _t('勾选后在后台文章编辑处自动添加图片上传按钮'));
         $form->addInput($Content_);
 
         $Comment_ = new Typecho_Widget_Helper_Form_Element_Radio('Comment_', array(
             1 => _t('启用'),
             0 => _t('关闭'),
-        ), 1, _t($language[9]), _t($language[10]));
+        ), 1, _t('是否启用评论上传按钮'), _t('勾选后在评论框后自动添加图片上传按钮'));
         $form->addInput($Comment_);
 
         // 是否保留本地文件，这个选项表示还是会上传到sm ，但是不会保留本地副本
         $Nolocal_ = new Typecho_Widget_Helper_Form_Element_Radio('Nolocal_', array(
             1 => _t('启用'),
             0 => _t('关闭'),
-        ), 1, _t($language[11]), _t($language[12]));
+        ), 1, _t('删除本地文件'), _t('勾选后不保留本地上传文件'));
         $form->addInput($Nolocal_);
 
         // 只上传到本地，不上传到SM

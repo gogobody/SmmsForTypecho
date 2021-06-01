@@ -594,29 +594,53 @@ class SmmsForTypecho_Action extends Typecho_Widget implements Widget_Interface_D
             return $result;
         }
 
+        $SourceImg_ = $plugin_config->SourceImg_;
+        $hello_name = $plugin_config->hello_name;
+        $hello_pswd = $plugin_config->hello_pswd;
+
         $auth = $plugin_config->Authorization_;
 
-        $smapi = new SMApi($auth);
+        $smapi = new SMApi($auth,$hello_name,$hello_pswd,$SourceImg_);
 
         $result = $smapi->Upload($path);
+        if ($SourceImg_ == 1){
+            if ($result["success"]) {
+                $data['width']  = $result['data']['width'];
+                $data['height'] = $result['data']['height'];
+                $data['size']   = $result['data']['size'];
+                $data['hash']   = $result['data']['hash'];
+                $data['url']    = $result['data']['url'];
 
-        if ($result["success"]) {
-            $data['width']  = $result['data']['width'];
-            $data['height'] = $result['data']['height'];
-            $data['size']   = $result['data']['size'];
-            $data['hash']   = $result['data']['hash'];
-            $data['url']    = $result['data']['url'];
+                $insert = $tdb->insert('table.'.MY_NEW_TABLE_NAME)
+                    ->rows($data);
+                $insertId = $tdb->query($insert);
 
-            $insert = $tdb->insert('table.'.MY_NEW_TABLE_NAME)
-                ->rows($data);
-            $insertId = $tdb->query($insert);
-
-            if ($plugin_config->Nolocal_) {
-                unlink($path);
+                if ($plugin_config->Nolocal_) {
+                    unlink($path);
+                }
+            } elseif ($result["code"] == "image_repeated") {
+                $result['data']['url'] = $result["images"];
             }
-        } elseif ($result["code"] == "image_repeated") {
-            $result['data']['url'] = $result["images"];
+        }else{
+            if ($result["success"]["code"] == 200) {
+                $data['width']  = $result['image']['width'];
+                $data['height'] = $result['image']['height'];
+                $data['size']   = $result['image']['size'];
+                $data['hash']   = $result['image']['md5'];
+                $data['url']    = $result['image']['url'];
+
+                $insert = $tdb->insert('table.'.MY_NEW_TABLE_NAME)
+                    ->rows($data);
+                $insertId = $tdb->query($insert);
+
+                if ($plugin_config->Nolocal_) {
+                    unlink($path);
+                }
+            } elseif ($result["error"]["code"] == 101) { // 重复上传
+//                $result['data']['url'] = $result["images"];
+            }
         }
+
 
         print_r(json_encode($result));
         return $result;

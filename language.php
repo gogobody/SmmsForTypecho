@@ -1,6 +1,6 @@
 <?php
 $language_cn = [
-	"SMMS 图床",
+	"Typecho图床插件",
 	"图片库", //1
 	"设置",
 	"提交成功",
