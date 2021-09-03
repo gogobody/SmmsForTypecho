@@ -16,7 +16,7 @@ include 'smms.function.php';
 include 'smapi.php';
 
 define('SMMS_URL', Helper::options()->pluginUrl . '/SmmsForTypecho/');  //返回当前插件的目录URI,
-define('SMMS_VERSION', "4.4");
+define('SMMS_VERSION', "4.5");
 function outHtml(){
     $html_ = '<div class="admin-img-manager"><div class="admin-manage-img ui_button"><div class="button" id="toggleModal" >Typecho图床插件</div></div><div class="admin-upload-img"><label class="ui_button ui_button_primary" for="admin-img-file">上传文件</label><form><input id="admin-img-file" type="file" accept="image/*" multiple="multiple"></form></div><div class="modal">' .
         '<div class="modal-header">'.
