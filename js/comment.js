@@ -53,18 +53,32 @@ smms = {
                         $('#zz-img-add .chevereto-pup-button-text').text('upload...')
                     },
                     success: function (res) {
+                        if(res.status_code===400){ // hello 图床
+                            alert(res.error.message + " ps：第三方网站的锅，开发者不背锅" )
+                            $('#zz-img-add .chevereto-pup-button-text').text('上传')
+                            return
+                        }
+                        let imgUrl = res.data && res.data.url?res.data.url:res.image.display_url // hello 图床
+
                         $('#zz-img-add .chevereto-pup-button-icon').show()
                         $("#zz-img-add .chevereto-pup-button-text").text('上传');
-                        $('#zz-img-show').append('<img src="' + res.data.url + '" />');
+                        $('#zz-img-show').append('<img src="' + imgUrl + '" />');
                         //$('textarea[name="comment"]').val($('textarea[name="comment"]').val() + '<img src="' + res.data.url + '" />').focus();
+                        const onecircle_avatar = $("#personal-userAvatar input[name='userAvatar']");
+                        if(onecircle_avatar.length > 0){
+                            onecircle_avatar.val(imgUrl)
+                        }
+
+
                         if (typeof comment_selector_!="undefined" && $(comment_selector_).length > 0){
-                            $(comment_selector_).insertAtCaret('<img src="' + res.data.url + '" />');
+                            $(comment_selector_).insertAtCaret('<img src="' + imgUrl + '" />');
                         }
                         var onecircleIndexInput = $('input[data-addarea]')
                         if (onecircleIndexInput.length > 0){
-                            onecircleIndexInput.insertAtCaret(res.data.url)
+                            onecircleIndexInput.insertAtCaret(imgUrl)
                             onecircleIndexInput.siblings("button").click()
                         }
+                        $('#zz-img-add .chevereto-pup-button-text').text('上传')
                     }
                 })
             }

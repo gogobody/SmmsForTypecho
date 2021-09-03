@@ -7,7 +7,7 @@ define('__TYPECHO_DEBUG__', true);
  * 
  * @package SmmsForTypecho
  * @author gogobody
- * @version 4.4
+ * @version 4.5
  * @link https://github.com/gogobody/SmmsForTypecho
  */
 //设置语言
