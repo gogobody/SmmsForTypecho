@@ -554,6 +554,15 @@ class SmmsForTypecho_Action extends Typecho_Widget implements Widget_Interface_D
 
 //        $path = $tpath.$_FILES['smfile']['name'];
         $ext = Upload::getSafeName($_FILES['smfile']['name']);
+
+        if (!Upload::checkFileType($ext) ) {
+            print_r(json_encode([
+                'status_code'=>400,
+                'msg'=>'check failed'
+            ]));
+            return [];
+        }
+
         //获取文件名
         $fileName = sprintf('%u', crc32(uniqid())) . '.' . $ext;
         $path = $tpath . $fileName;
@@ -622,7 +631,12 @@ class SmmsForTypecho_Action extends Typecho_Widget implements Widget_Interface_D
                 $result['data']['url'] = $result["images"];
             }
         }else{
-            if ($result["success"]["code"] == 200) {
+            if(array_key_exists('status_code',$result)){
+                if ($result["status_code"] == 400){
+                    // err
+                }
+            }
+            if (array_key_exists('success',$result) && $result["success"]["code"] == 200) {
                 $data['width']  = $result['image']['width'];
                 $data['height'] = $result['image']['height'];
                 $data['size']   = $result['image']['size'];
