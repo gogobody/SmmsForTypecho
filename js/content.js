@@ -45,7 +45,9 @@ jQuery(document).ready(function ($) {
                             location.reload()
                         }
                     }else{
-                        alert(res)
+                        if (res.code === "unauthorized"){
+                            alert('smms现在必须登录才能上传')
+                        }
                         console.log(res)
                     }
                     label.text("上传")

@@ -1,14 +1,19 @@
 <?php
-include 'common.php';
-include 'header.php';
-include 'menu.php';
+include_once 'common.php';
+include_once 'header.php';
+include_once 'menu.php';
 
-include 'language.php';
+include_once 'language.php';
 $tdb = Typecho_Db::get();
 global $language;
 $request = Typecho_Request::getInstance();
-define('MY_NEW_TABLE_NAME', 'smms_image_list');
-define('SMMS_URL', Helper::options()->pluginUrl . '/SmmsForTypecho/');  //返回当前插件的目录URI,
+if (!defined('MY_NEW_TABLE_NAME')) {
+    define('MY_NEW_TABLE_NAME', 'smms_image_list');
+}
+if (!defined('SMMS_URL')) {
+    define('SMMS_URL', Helper::options()->pluginUrl . '/SmmsForTypecho/');  //返回当前插件的目录URI,
+}
+
 
 if (@$_POST['action'] == 'delete' || @$_POST['action2'] == 'delete') {
     $options = Helper::options();
@@ -42,7 +47,7 @@ if (@$_POST['action'] == 'delete' || @$_POST['action2'] == 'delete') {
     }
 
 }
-$pages = $_GET['paged']? : 1;
+$pages = (array_key_exists('paged', $_GET) and $_GET['paged'])? : 1;
 $limit = 10;
 $offset = ($pages - 1) * 10;
 $query = $tdb->select()->from('table.' . MY_NEW_TABLE_NAME)->order('id', Typecho_Db::SORT_DESC)->offset($offset)->limit($limit);
@@ -57,7 +62,7 @@ $all_pages = (int)($count / 10) + 1;
 ?>
 <div class="main">
     <div class="body container">
-        <?php include 'page-title.php'; ?>
+        <?php include_once 'page-title.php'; ?>
         <div class="row typecho-page-main manage-metas">
             <div class="col-mb-12">
                 <ul class="typecho-option-tabs clearfix">
@@ -206,9 +211,9 @@ $all_pages = (int)($count / 10) + 1;
 <div id="background" class="background" style="display: none; "></div>
 <div id="progressBar" class="progressBar" style="display: none; ">请稍等...</div>
 <?php
-include 'copyright.php';
-include 'common-js.php';
-include 'table-js.php';
+include_once 'copyright.php';
+include_once 'common-js.php';
+include_once 'table-js.php';
 ?>
 <script>
     function submitF(e){
@@ -228,4 +233,4 @@ echo '<script src="'. SMMS_URL . 'js/content.js'. '"></script>';
 echo '<script src="'. SMMS_URL . 'js/modal.min.js'. '"></script>';
 ?>
 
-<?php include 'footer.php'; ?>
+<?php include_once 'footer.php'; ?>

@@ -1,6 +1,5 @@
 <?php
 if (!defined('__TYPECHO_ROOT_DIR__')) exit;
-define('__TYPECHO_DEBUG__', true);
 /**
  * SmmsForTypecho_Plugin 是 typecho 的图床插件，支持 sm.ms 图床和 helloimg.com 图床
  *
@@ -11,9 +10,9 @@ define('__TYPECHO_DEBUG__', true);
  * @link https://github.com/gogobody/SmmsForTypecho
  */
 //设置语言
-include 'language.php';
-include 'smms.function.php';
-include 'smapi.php';
+include_once 'language.php';
+include_once 'smms.function.php';
+include_once 'smapi.php';
 
 define('SMMS_URL', Helper::options()->pluginUrl . '/SmmsForTypecho/');  //返回当前插件的目录URI,
 define('SMMS_VERSION', "4.5");
@@ -141,7 +140,7 @@ class SmmsForTypecho_Plugin implements Typecho_Plugin_Interface
         $localOnly = new Typecho_Widget_Helper_Form_Element_Radio('localOnly', array(
             1 => _t('启用'),
             0 => _t('关闭'),
-        ), 0, "只上传到本地", "启用后文件只会上传到本地不会上传到sm（上面选项将失效）");
+        ), 1, "只上传到本地", "启用后文件只会上传到本地不会上传到sm（上面选项将失效）");
         $form->addInput($localOnly);
     }
     
@@ -162,9 +161,11 @@ class SmmsForTypecho_Plugin implements Typecho_Plugin_Interface
 
     }
     public static function admin_scripts_css($header){
+
         if (Typecho_Widget::widget('Widget_User')->hasLogin()) {
 //            echo $header;
-            $header = $header.'<link rel="stylesheet" href="'. SMMS_URL . 'css/input.min.css'.'" type="text/css"/><link rel="stylesheet" href="'. SMMS_URL . 'css/modal.css'.'" type="text/css"/>';
+            echo '<link rel="stylesheet" href="'. SMMS_URL . 'css/input.min.css'.'" type="text/css"/><link rel="stylesheet" href="'. SMMS_URL . 'css/modal.css'.'" type="text/css"/>'.
+                '<link rel="stylesheet" href="'.SMMS_URL . 'css/smms.diy.min.css'.'" type="text/css"/>';;
 //            echo '<link rel="stylesheet" href="'. SMMS_URL . 'css/input.min.css'.'" type="text/css"/>';
 //            echo '<link rel="stylesheet" href="'. SMMS_URL . 'css/modal.css'.'" type="text/css"/>';
         }

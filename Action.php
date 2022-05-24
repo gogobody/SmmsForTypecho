@@ -8,7 +8,9 @@ if (!defined('__TYPECHO_ROOT_DIR__')) exit;
  * @category typecho
  * @package Widget
  */
-define('MY_NEW_TABLE_NAME', 'smms_image_list');
+if (!defined('MY_NEW_TABLE_NAME')){
+    define('MY_NEW_TABLE_NAME', 'smms_image_list');
+}
 require(__DIR__ . DIRECTORY_SEPARATOR . "smapi.php");
 
 class Upload extends Widget_Abstract_Contents implements Widget_Interface_Do
